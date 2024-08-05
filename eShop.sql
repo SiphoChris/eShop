@@ -1,0 +1,8 @@
+CREATE DATABASE eShop;
+USE eShop;
+
+CREATE TABLE IF NOT EXISTS Customers(
+)
+
+CREATE TABLE IF NOT EXISTS Products(
+)
