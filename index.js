@@ -1,1 +1,1 @@
-//some amazing comment
+// some cool comment
