@@ -8,5 +8,20 @@
 
 body{
     padding: 12px 36px;
-    background-color: #90abc3;
+    background-image: linear-gradient(
+        to right,
+        #326fa5,
+        #3a006d);
+}
+
+:is(h1){
+    text-align: center;
+    font-size: 42px;
+    color: rgb(43, 0, 151);
+    -webkit-text-stroke: 2px white;
+}
+
+h3{
+    text-align: center;
+    margin-top: 50px;
 }
