@@ -1,13 +1,13 @@
 import path from "node:path";
 import { connection as db } from "../config/index.js";
 import { createToken } from "../middleware/authenticateUser.js";
-import { hash } from "bcrypt";
+import { hash, compare } from "bcrypt";
 
-function getHomePage(_req, res) {
+export function getHomePage(_req, res) {
   res.status(200).sendFile(path.resolve("./static/html/index.html"));
 }
 
-function getUsers(_req, res) {
+export function getUsers(_req, res) {
   try {
     const strQry = `
                 SELECT userID, firstName, lastName, age, emailAddress
@@ -29,7 +29,7 @@ function getUsers(_req, res) {
   }
 }
 
-function getUser(req, res) {
+export function getUser(req, res) {
   try {
     const userID = req.params.userID;
     const strQry = `
@@ -39,10 +39,10 @@ function getUser(req, res) {
     `;
     db.query(strQry, [userID], (err, results) => {
       if (err) {
-        return res.status(500).json({ error: 'Unable to fetch user' });
+        return res.status(500).json({ error: "Unable to fetch user" });
       }
       if (results.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
       res.json({
         status: res.statusCode,
@@ -57,12 +57,10 @@ function getUser(req, res) {
   }
 }
 
-
-async function registerUser(req, res) {
+export async function registerUser(req, res) {
   try {
     let data = req.body;
     data.userPassword = await hash(data.userPassword, 12);
-    // payload
     let user = {
       emailAddress: data.emailAddress,
       userPassword: data.userPassword,
@@ -86,9 +84,9 @@ async function registerUser(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+export async function updateUser(req, res) {
   try {
-    const {userID} = req.params
+    const { userID } = req.params;
     let data = req.body;
     if (data.userPassword) {
       data.userPassword = await hash(data.userPassword, 12);
@@ -97,7 +95,7 @@ async function updateUser(req, res) {
                     SET ?
                     WHERE userID = ${userID};`;
     db.query(strQry, [data], (err) => {
-      if (err) throw new Error('Unable to update user');
+      if (err) throw new Error("Unable to update user");
       res.json({
         status: res.statusCode,
         msg: "User updated successfully",
@@ -111,7 +109,109 @@ async function updateUser(req, res) {
   }
 }
 
-function getErrorPage(_req, res) {
+export function deleteUser(req, res) {
+  try {
+    const userID = req.params.userID;
+    const strQry = `DELETE FROM Users 
+                    WHERE userID = ?;`;
+
+    db.query(strQry, [userID], (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: "Unable to delete user" });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      res.status(200).json({
+        status: res.statusCode,
+        msg: "User deleted successfully",
+      });
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export function deleteUsers(req, res) {
+  try {
+    const strQry = `DELETE FROM Users;`;
+
+    db.query(strQry, (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: "Unable to delete users" });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ msg: "Users not found" });
+      }
+
+      res.status(200).json({
+        status: res.statusCode,
+        msg: "Users deleted successfully",
+      });
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export function getErrorPage(_req, res) {
   res.sendFile(path.resolve("./static/html/error.html"));
 }
-export { getUsers, getHomePage, getUser, getErrorPage, registerUser, updateUser };
+
+export async function loginUser(req, res) {
+  try {
+    const { emailAddress, userPassword } = req.body;
+
+    const strQry = `SELECT userID, firstName, lastName, age, emailAddress, userPassword
+                    FROM Users
+                    WHERE emailAddress = ?;`;
+
+    db.query(strQry, [emailAddress], async (err, results) => {
+      if (err) {
+        return res.status(500).json({ status: 500, msg: "Server error" });
+      }
+
+      if (results.length === 0) {
+        return res.status(401).json({
+          status: 401,
+          msg: "Invalid email. Please try again.",
+        });
+      }
+
+      const user = results[0];
+      const isValidPass = await compare(userPassword, user.userPassword);
+
+      if (isValidPass) {
+        const token = createToken({
+          emailAddress: user.emailAddress,
+          userPassword: user.userPassword,
+        });
+        return res.status(200).json({
+          status: 200,
+          token,
+          user: {
+            userID: user.userID,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            age: user.age,
+            emailAddress: user.emailAddress,
+          },
+        });
+      } else {
+        return res.status(401).json({
+          status: 401,
+          msg: "Invalid password or you have not registered.",
+        });
+      }
+    });
+  } catch (e) {
+    return res.status(500).json({
+      status: 500,
+      msg: "Server error",
+    });
+  }
+}
+ 
