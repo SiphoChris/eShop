@@ -1,8 +1,17 @@
 import express from "express";
-import {getUsers, getHomePage, getUser, getErrorPage} from '../controllers/index.js';
+import bodyParser from "body-parser";
+import {
+  getHomePage,
+  getUsers,
+  getUser,
+  registerUser,
+  updateUser,
+  getErrorPage,
+} from "../controllers/index.js";
 
 const server = express();
 const router = express.Router();
+router.use(bodyParser.json());
 
 // home page end-point : gets home page
 router.get("^/$|/eShop", getHomePage);
@@ -13,6 +22,12 @@ router.get("/users", getUsers);
 // user end-point : gets a user by id
 router.get("/user/:userID", getUser);
 
-router.get('*', getErrorPage)
+// register end-point : registers a new user
+router.post("/register", registerUser);
 
-export {router}
+// update end-point : updates a user
+router.patch("/user/:userID", updateUser);
+
+router.get("*", getErrorPage);
+
+export { router };
