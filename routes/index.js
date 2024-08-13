@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser";
 import {
   getHomePage,
   getUsers,
@@ -13,33 +12,38 @@ import {
 } from "../controllers/index.js";
 
 const server = express();
-const router = express.Router();
-router.use(bodyParser.json());
+const userRouter = express.Router();
+const shopRouter = express.Router();
+
+// middleware
+userRouter.use(express.json());
 
 // home page end-point : gets home page
-router.get("^/$|/eShop", getHomePage);
+shopRouter.get("/|^/$|^/products", getHomePage);
 
 // users end-point : gets all users
-router.get("/users", getUsers);
+userRouter.get("^/$|^/all$", getUsers);
 
 // user end-point : gets a user by id
-router.get("/users/:userID", getUser);
+userRouter.get("/:userID", getUser);
 
 // register end-point : registers a new user
-router.post("/register", registerUser);
+userRouter.post("/register", registerUser);
 
 // update end-point : updates a user
-router.patch("/users/:userID", updateUser);
+userRouter.patch("/update/:userID", updateUser);
 
 // delete end-point : delete a user
-router.delete("/users/:userID", deleteUser);
+userRouter.delete("/delete/:userID", deleteUser);
 
 // delete end-point : delete users
-router.delete("/users", deleteUsers);
+userRouter.delete("/delete", deleteUsers);
 
 // login end-point : login a user
-router.post("/login", loginUser)
+userRouter.post("/login", loginUser)
 
-router.get("*", getErrorPage);
+// error page end-point : gets error page
+userRouter.get("*", getErrorPage);
+shopRouter.get("*", getErrorPage);
 
-export { router };
+export { userRouter, shopRouter };

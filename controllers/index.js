@@ -10,7 +10,7 @@ export function getHomePage(_req, res) {
 export function getUsers(_req, res) {
   try {
     const strQry = `
-                SELECT userID, firstName, lastName, age, emailAddress
+                SELECT userID, firstName, lastName, age, emailAddress, userRole
                 from Users;
                 `;
     db.query(strQry, (err, results) => {
@@ -33,7 +33,7 @@ export function getUser(req, res) {
   try {
     const userID = req.params.userID;
     const strQry = `
-      SELECT userID, firstName, lastName, age, emailAddress
+      SELECT userID, firstName, lastName, age, emailAddress, userRole
       FROM Users
       WHERE userID = ?;
     `;
@@ -157,10 +157,6 @@ export function deleteUsers(req, res) {
   }
 }
 
-export function getErrorPage(_req, res) {
-  res.sendFile(path.resolve("./static/html/error.html"));
-}
-
 export async function loginUser(req, res) {
   try {
     const { emailAddress, userPassword } = req.body;
@@ -214,4 +210,11 @@ export async function loginUser(req, res) {
     });
   }
 }
- 
+
+export function getErrorPage(_req, res) {
+  // res.sendFile(path.resolve("./static/html/error.html"));
+  res.json({
+    status: 404,
+    msg: "Page not found"
+  })
+}

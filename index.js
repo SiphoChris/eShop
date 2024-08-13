@@ -1,5 +1,5 @@
 import express from "express";
-import { router } from "./routes/index.js";
+import { userRouter, shopRouter } from "./routes/index.js";
 import { createToken } from "./middleware/authenticateUser.js";
 
 const port = +process.env.PORT || 3000;
@@ -8,11 +8,13 @@ const server = express();
 
 // middleware
 server.use(
-  router,
   express.static("./static"),
-  express.json(),
   express.urlencoded({ extended: true })
 );
+
+// routes
+server.use('/api/users', userRouter)
+server.use('/api/shop', shopRouter)
 
 // auth
 server.use(createToken) 
