@@ -9,7 +9,7 @@ import {
   deleteUser,
   deleteUsers,
   getErrorPage,
-} from "../controllers/index.js";
+} from "../controllers/usersController.js";
 
 const server = express();
 const userRouter = express.Router();

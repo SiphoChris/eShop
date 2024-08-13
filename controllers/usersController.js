@@ -7,6 +7,14 @@ export function getHomePage(_req, res) {
   res.status(200).sendFile(path.resolve("./static/html/index.html"));
 }
 
+export function getErrorPage(_req, res) {
+  // res.sendFile(path.resolve("./static/html/error.html"));
+  res.json({
+    status: 404,
+    msg: "Page not found"
+  })
+}
+
 export function getUsers(_req, res) {
   try {
     const strQry = `
@@ -211,10 +219,4 @@ export async function loginUser(req, res) {
   }
 }
 
-export function getErrorPage(_req, res) {
-  // res.sendFile(path.resolve("./static/html/error.html"));
-  res.json({
-    status: 404,
-    msg: "Page not found"
-  })
-}
+
