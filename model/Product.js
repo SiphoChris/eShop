@@ -8,10 +8,13 @@ class Product {
                         from Products;
                         `;
       db.query(strQry, (err, results) => {
-        if (err) throw new Error(`Unable to fetch all users`);
+        if (err) json({
+          status: res.statusCode,
+          msg: `Unable to fetch all users`
+        });
         res.json({
           status: res.statusCode,
-          results: results,
+          results,
         });
       });
     } catch (e) {
@@ -24,11 +27,11 @@ class Product {
 
   fetchProductByID(req, res) {
     try {
-      const prodID = req.params.prodID;
+      const prodID = req.params.productID;
       const strQry = `
               SELECT productID, prodName, category, prodDescription, prodURL, amount
               FROM Products
-              WHERE prodID = ?;
+              WHERE productID = ?;
             `;
       db.query(strQry, [prodID], (err, results) => {
         if (err) {
@@ -50,32 +53,32 @@ class Product {
     }
   }
 
-  recentProducts(req, res){
+  recentProducts(req, res) {
     try {
-        const strQry = `
+      const strQry = `
               SELECT productID, prodName, category, prodDescription, prodURL, amount
               FROM Products
               WHERE prodID = ?
               ORDER BY prodID DESC
               LIMIT 5;
             `;
-        db.query(strQry, [prodID], (err, results) => {
-            if (err) {
-                return res.status(500).json({ error: "Unable to fetch productS" });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ error: "productS not found" });
-            }
-            res.json({
-                status: res.statusCode,
-                results: results[0],
-            });
+      db.query(strQry, [prodID], (err, results) => {
+        if (err) {
+          return res.status(500).json({ error: "Unable to fetch productS" });
+        }
+        if (results.length === 0) {
+          return res.status(404).json({ error: "productS not found" });
+        }
+        res.json({
+          status: res.statusCode,
+          results: results[0],
         });
+      });
     } catch (e) {
-        res.status(500).json({
-            status: res.statusCode,
-            msg: e.message,
-        });
+      res.status(500).json({
+        status: res.statusCode,
+        msg: e.message,
+      });
     }
   }
 

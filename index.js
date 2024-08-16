@@ -6,22 +6,22 @@ import path from "path"
 const port = +process.env.PORT || 4000;
 
 const server = express();
+const router = express.Router();
 
 // middleware
 server.use(
   express.static("./static"),
-  express.json(),
   express.urlencoded({ extended: true })
 );
 
+router.use(express.json())
 
-server.get("/", (req, res) => {
+router.get("^/|/", (req, res) => {
   res.sendFile(path.resolve("./static/html/index.html"));
 });
 
 // routes
 server.use('/api/users', userRouter)
 server.use('/api/shop', shopRouter)
-
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

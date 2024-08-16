@@ -1,14 +1,16 @@
 import express from "express";
 import { product } from "../model/index.js";
 import path from "path";
+import { verifyToken } from "../middleware/authenticateUser.js";
 
 // routes
 const shopRouter = express.Router();
 
 // middleware
 shopRouter.use(express.json());
+shopRouter.use(verifyToken)
 
-shopRouter.get("/products", (req, res) => {
+shopRouter.get("^/$|/products", (req, res) => {
     product.fetchProducts(req, res);
 })
 
