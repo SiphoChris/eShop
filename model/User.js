@@ -27,7 +27,7 @@ class User {
     }
   }
 
-  fetchUsersByID(req, res) {
+  fetchUserByID(req, res) {
     try {
       const userID = req.params.userID;
       const strQry = `
