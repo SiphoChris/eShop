@@ -94,8 +94,8 @@ class User {
       }
       const strQry = `UPDATE Users
                         SET ?
-                        WHERE userID = ${userID};`;
-      db.query(strQry, [data], (err) => {
+                        WHERE userID = ?;`;
+      db.query(strQry, [data, userID], (err) => {
         if (err) throw new Error("Unable to update user");
         res.json({
           status: res.statusCode,

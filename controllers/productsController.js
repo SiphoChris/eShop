@@ -10,7 +10,7 @@ const shopRouter = express.Router();
 shopRouter.use(express.json());
 shopRouter.use(verifyToken)
 
-shopRouter.get("^/$|/products", (req, res) => {
+shopRouter.get("/products", (req, res) => {
     product.fetchProducts(req, res);
 })
 
