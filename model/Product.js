@@ -8,10 +8,11 @@ class Product {
                         from Products;
                         `;
       db.query(strQry, (err, results) => {
-        if (err) json({
-          status: res.statusCode,
-          msg: `Unable to fetch all users`
-        });
+        if (err)
+          res.json({
+            status: res.statusCode,
+            msg: `Unable to fetch all users`,
+          });
         res.json({
           status: res.statusCode,
           results,
@@ -27,7 +28,7 @@ class Product {
 
   fetchProductByID(req, res) {
     try {
-      const prodID = req.params.productID;
+      const { prodID } = req.params.productID;
       const strQry = `
               SELECT productID, prodName, category, prodDescription, prodURL, amount
               FROM Products
@@ -35,15 +36,16 @@ class Product {
             `;
       db.query(strQry, [prodID], (err, results) => {
         if (err) {
-          return res.status(500).json({ error: "Unable to fetch product" });
+          res.status(500).json({ error: "Unable to fetch product" });
+        } else {
+          res.json({
+            status: res.statusCode,
+            results: results[0],
+          });
         }
         if (results.length === 0) {
-          return res.status(404).json({ error: "product not found" });
+          res.status(404).json({ error: "product not found" });
         }
-        res.json({
-          status: res.statusCode,
-          results: results[0],
-        });
       });
     } catch (e) {
       res.status(500).json({
@@ -58,20 +60,19 @@ class Product {
       const strQry = `
               SELECT productID, prodName, category, prodDescription, prodURL, amount
               FROM Products
-              WHERE prodID = ?
-              ORDER BY prodID DESC
+              ORDER BY productID DESC
               LIMIT 5;
             `;
-      db.query(strQry, [prodID], (err, results) => {
+      db.query(strQry, (err, results) => {
         if (err) {
           return res.status(500).json({ error: "Unable to fetch productS" });
         }
         if (results.length === 0) {
-          return res.status(404).json({ error: "productS not found" });
+          return res.status(404).json({ error: "Products not found" });
         }
         res.json({
           status: res.statusCode,
-          results: results[0],
+          results,
         });
       });
     } catch (e) {

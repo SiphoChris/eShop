@@ -14,13 +14,14 @@ shopRouter.get("/products", (req, res) => {
     product.fetchProducts(req, res);
 })
 
+shopRouter.get("/products/recent", (req, res) => {
+  product.recentProducts(req, res);
+});
+
 shopRouter.get("/products/:productID", (req, res) => {
   product.fetchProductByID(req, res);
 });
 
-shopRouter.get("/products/recent", (req, res) => {
-  product.recentProducts(req, res);
-});
 
 shopRouter.post("/products/add", (req, res) => {
   product.addProduct(req, res);
@@ -33,9 +34,5 @@ shopRouter.patch("/products/update/:productID", (req, res) => {
 shopRouter.delete("/products/delete/:productID", (req, res) => {
   product.deleteProduct(req, res);
 });
-
-shopRouter.get("*", (req, res) => {
-    res.sendFile(path.resolve("./static/html/error.html"));
-  })
 
 export {shopRouter}
