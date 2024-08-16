@@ -8,11 +8,6 @@ const shopRouter = express.Router();
 // middleware
 shopRouter.use(express.json());
 
-
-shopRouter.get("/", (req, res) => {
-  res.sendFile(path.resolve("./static/html/index.html"));
-});
-
 shopRouter.get("/products", (req, res) => {
     product.fetchProducts(req, res);
 })

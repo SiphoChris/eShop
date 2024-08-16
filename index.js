@@ -1,7 +1,7 @@
 import express from "express";
 import { userRouter } from "./controllers/usersController.js";
 import { shopRouter } from "./controllers/productsController.js";
-import { createToken } from "./middleware/authenticateUser.js";
+import path from "path"
 
 const port = +process.env.PORT || 4000;
 
@@ -10,10 +10,14 @@ const server = express();
 // middleware
 server.use(
   express.static("./static"),
+  express.json(),
   express.urlencoded({ extended: true })
 );
-// auth
-server.use(createToken) 
+
+
+server.get("/", (req, res) => {
+  res.sendFile(path.resolve("./static/html/index.html"));
+});
 
 // routes
 server.use('/api/users', userRouter)
