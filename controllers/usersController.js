@@ -37,9 +37,5 @@ userRouter.delete("/delete", (req, res) => {
   user.deleteUsers(req, res);
 })
 
-userRouter.get("*", (req, res) => {
-  res.sendFile(path.resolve("./static/html/error.html"));
-})
-
 
 export {userRouter}
